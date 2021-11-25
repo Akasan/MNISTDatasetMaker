@@ -3,18 +3,13 @@ from torch.utils.data import Dataset, DataLoader
 from torchvision.datasets import MNIST
 
 
-DATASET_PARAM = {
-    "root": "./data",
-    "train": True,
-    "download": True,
-    "transform": None
-}
+DATASET_PARAM = {"root": "./data", "train": True, "download": True, "transform": None}
 
 DATALOADER_PARAM = {
     "batch_size": 128,
     "shuffle": True,
     "num_workers": 1,
-    "pin_memory": True
+    "pin_memory": True,
 }
 
 
@@ -66,13 +61,19 @@ class MultiLabelMNIST(Dataset):
         return len(self.dataset)
 
 
-def get_mnist_dataset(dataset_param: Dict = DATASET_PARAM):
+def get_mnist_dataset(dataset_param: Dict = DATASET_PARAM) -> Dataset:
     return MNIST(**dataset_param)
 
 
-def get_mnist_dataloader(label: Union[int, List[int]],
-                         dataset_param: Dict = DATASET_PARAM,
-                         dataloader_param: Dict = DATALOADER_PARAM):
+def get_mnist_dataloader(
+    label: Union[int, List[int]],
+    dataset_param: Dict = DATASET_PARAM,
+    dataloader_param: Dict = DATALOADER_PARAM,
+) -> DataLoader:
     d = get_mnist_dataset(dataset_param)
-    d = SingleLabelMNIST(d, label) if isinstance(label, int) else MultiLabelMNIST(d, label)
+    d = (
+        SingleLabelMNIST(d, label)
+        if isinstance(label, int)
+        else MultiLabelMNIST(d, label)
+    )
     return DataLoader(d, **dataloader_param)
